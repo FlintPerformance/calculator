@@ -29,10 +29,7 @@
         <button class="calc-nav-btn" data-calc="ffmi">FFMI</button>
         <button class="calc-nav-btn" data-calc="tdee">TDEE</button>
         <button class="calc-nav-btn" data-calc="one-rep-max">1RM</button>
-        <button class="calc-nav-btn" data-calc="body-fat">Body Fat %</button>
-        <button class="calc-nav-btn" data-calc="macro">Macros</button>
         <button class="calc-nav-btn" data-calc="wilks">Wilks</button>
-        <button class="calc-nav-btn" data-calc="calorie">Calories</button>
       </div>
     </nav>
 
@@ -201,6 +198,17 @@
                 <option value="1.9">Extremely Active (athlete / physical job)</option>
               </select>
             </div>
+            <div class="form-group">
+              <label>Macro Ratio</label>
+              <select id="tdee-macro-ratio">
+                <option value="balanced">Balanced (40/30/30 — C/P/F)</option>
+                <option value="high-protein">High Protein (35/40/25 — C/P/F)</option>
+                <option value="low-carb">Low Carb (20/40/40 — C/P/F)</option>
+                <option value="low-fat">Low Fat (50/30/20 — C/P/F)</option>
+                <option value="keto">Keto (5/30/65 — C/P/F)</option>
+                <option value="zone">Zone Diet (40/30/30 — C/P/F)</option>
+              </select>
+            </div>
             <button class="calc-btn" onclick="calculateTDEE()">Calculate TDEE</button>
           </div>
           <div class="calc-result" id="tdee-result"></div>
@@ -232,151 +240,6 @@
             <button class="calc-btn" onclick="calculateOneRepMax()">Calculate 1RM</button>
           </div>
           <div class="calc-result" id="orm-result"></div>
-        </div>
-      </section>
-
-      <!-- Body Fat % Calculator -->
-      <section class="calc-panel" id="calc-body-fat">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>Body Fat % Calculator</h2>
-            <p class="calc-desc">Estimate body fat percentage using the U.S. Navy method.</p>
-          </div>
-          <div class="calc-body">
-            <div class="unit-toggle">
-              <button class="unit-btn active" data-unit="imperial">Imperial</button>
-              <button class="unit-btn" data-unit="metric">Metric</button>
-            </div>
-            <div class="form-group">
-              <label>Sex</label>
-              <select id="bf-sex" onchange="toggleBFFields()">
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-              </select>
-            </div>
-            <div class="form-group imperial-fields">
-              <label>Height</label>
-              <div class="input-row">
-                <div class="input-wrap">
-                  <input type="number" id="bf-feet" placeholder="5" min="1" max="8">
-                  <span class="input-unit">ft</span>
-                </div>
-                <div class="input-wrap">
-                  <input type="number" id="bf-inches" placeholder="10" min="0" max="11">
-                  <span class="input-unit">in</span>
-                </div>
-              </div>
-            </div>
-            <div class="form-group metric-fields" style="display:none;">
-              <label>Height</label>
-              <div class="input-wrap">
-                <input type="number" id="bf-cm" placeholder="178" min="50" max="250">
-                <span class="input-unit">cm</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Neck Circumference</label>
-              <div class="input-wrap">
-                <input type="number" id="bf-neck" placeholder="15" min="1" step="0.1">
-                <span class="input-unit dynamic-length-unit">in</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Waist Circumference</label>
-              <div class="input-wrap">
-                <input type="number" id="bf-waist" placeholder="34" min="1" step="0.1">
-                <span class="input-unit dynamic-length-unit">in</span>
-              </div>
-            </div>
-            <div class="form-group bf-hip-group" style="display:none;">
-              <label>Hip Circumference</label>
-              <div class="input-wrap">
-                <input type="number" id="bf-hip" placeholder="38" min="1" step="0.1">
-                <span class="input-unit dynamic-length-unit">in</span>
-              </div>
-            </div>
-            <button class="calc-btn" onclick="calculateBodyFat()">Calculate Body Fat %</button>
-          </div>
-          <div class="calc-result" id="bf-result"></div>
-        </div>
-      </section>
-
-      <!-- Macro Calculator -->
-      <section class="calc-panel" id="calc-macro">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>Macro Calculator</h2>
-            <p class="calc-desc">Get personalized macronutrient targets based on your TDEE and goals.</p>
-          </div>
-          <div class="calc-body">
-            <div class="unit-toggle">
-              <button class="unit-btn active" data-unit="imperial">Imperial</button>
-              <button class="unit-btn" data-unit="metric">Metric</button>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Sex</label>
-                <select id="macro-sex">
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Age</label>
-                <div class="input-wrap">
-                  <input type="number" id="macro-age" placeholder="25" min="10" max="100">
-                  <span class="input-unit">yrs</span>
-                </div>
-              </div>
-            </div>
-            <div class="form-group imperial-fields">
-              <label>Height</label>
-              <div class="input-row">
-                <div class="input-wrap">
-                  <input type="number" id="macro-feet" placeholder="5" min="1" max="8">
-                  <span class="input-unit">ft</span>
-                </div>
-                <div class="input-wrap">
-                  <input type="number" id="macro-inches" placeholder="10" min="0" max="11">
-                  <span class="input-unit">in</span>
-                </div>
-              </div>
-            </div>
-            <div class="form-group metric-fields" style="display:none;">
-              <label>Height</label>
-              <div class="input-wrap">
-                <input type="number" id="macro-cm" placeholder="178" min="50" max="250">
-                <span class="input-unit">cm</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Weight</label>
-              <div class="input-wrap">
-                <input type="number" id="macro-weight" placeholder="180" min="1">
-                <span class="input-unit dynamic-weight-unit">lbs</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Activity Level</label>
-              <select id="macro-activity">
-                <option value="1.2">Sedentary</option>
-                <option value="1.375">Lightly Active</option>
-                <option value="1.55" selected>Moderately Active</option>
-                <option value="1.725">Very Active</option>
-                <option value="1.9">Extremely Active</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Goal</label>
-              <select id="macro-goal">
-                <option value="cut">Fat Loss (Cut)</option>
-                <option value="maintain" selected>Maintain</option>
-                <option value="bulk">Muscle Gain (Bulk)</option>
-              </select>
-            </div>
-            <button class="calc-btn" onclick="calculateMacros()">Calculate Macros</button>
-          </div>
-          <div class="calc-result" id="macro-result"></div>
         </div>
       </section>
 
@@ -412,87 +275,6 @@
             <button class="calc-btn" onclick="calculateWilks()">Calculate Wilks</button>
           </div>
           <div class="calc-result" id="wilks-result"></div>
-        </div>
-      </section>
-
-      <!-- Calorie Calculator -->
-      <section class="calc-panel" id="calc-calorie">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>Calorie Calculator</h2>
-            <p class="calc-desc">Calculate daily calorie targets for weight loss, maintenance, or muscle gain.</p>
-          </div>
-          <div class="calc-body">
-            <div class="unit-toggle">
-              <button class="unit-btn active" data-unit="imperial">Imperial</button>
-              <button class="unit-btn" data-unit="metric">Metric</button>
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label>Sex</label>
-                <select id="cal-sex">
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                </select>
-              </div>
-              <div class="form-group">
-                <label>Age</label>
-                <div class="input-wrap">
-                  <input type="number" id="cal-age" placeholder="25" min="10" max="100">
-                  <span class="input-unit">yrs</span>
-                </div>
-              </div>
-            </div>
-            <div class="form-group imperial-fields">
-              <label>Height</label>
-              <div class="input-row">
-                <div class="input-wrap">
-                  <input type="number" id="cal-feet" placeholder="5" min="1" max="8">
-                  <span class="input-unit">ft</span>
-                </div>
-                <div class="input-wrap">
-                  <input type="number" id="cal-inches" placeholder="10" min="0" max="11">
-                  <span class="input-unit">in</span>
-                </div>
-              </div>
-            </div>
-            <div class="form-group metric-fields" style="display:none;">
-              <label>Height</label>
-              <div class="input-wrap">
-                <input type="number" id="cal-cm" placeholder="178" min="50" max="250">
-                <span class="input-unit">cm</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Weight</label>
-              <div class="input-wrap">
-                <input type="number" id="cal-weight" placeholder="180" min="1">
-                <span class="input-unit dynamic-weight-unit">lbs</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <label>Activity Level</label>
-              <select id="cal-activity">
-                <option value="1.2">Sedentary</option>
-                <option value="1.375">Lightly Active</option>
-                <option value="1.55" selected>Moderately Active</option>
-                <option value="1.725">Very Active</option>
-                <option value="1.9">Extremely Active</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Goal</label>
-              <select id="cal-goal">
-                <option value="lose-fast">Aggressive Fat Loss (-1000 cal)</option>
-                <option value="lose">Fat Loss (-500 cal)</option>
-                <option value="maintain" selected>Maintain Weight</option>
-                <option value="gain">Lean Bulk (+300 cal)</option>
-                <option value="gain-fast">Bulk (+500 cal)</option>
-              </select>
-            </div>
-            <button class="calc-btn" onclick="calculateCalories()">Calculate Calories</button>
-          </div>
-          <div class="calc-result" id="cal-result"></div>
         </div>
       </section>
 

@@ -215,6 +215,25 @@ function calculateTDEE() {
 
   var tdee = bmr * activity;
 
+  // Macro ratio breakdown
+  var ratioSelect = document.getElementById('tdee-macro-ratio');
+  var ratioKey = ratioSelect ? ratioSelect.value : 'balanced';
+
+  var macroRatios = {
+    'balanced':      { carb: 40, protein: 30, fat: 30, label: 'Balanced' },
+    'high-protein':  { carb: 35, protein: 40, fat: 25, label: 'High Protein' },
+    'low-carb':      { carb: 20, protein: 40, fat: 40, label: 'Low Carb' },
+    'low-fat':       { carb: 50, protein: 30, fat: 20, label: 'Low Fat' },
+    'keto':          { carb: 5,  protein: 30, fat: 65, label: 'Keto' },
+    'zone':          { carb: 40, protein: 30, fat: 30, label: 'Zone Diet' }
+  };
+
+  var ratio = macroRatios[ratioKey] || macroRatios['balanced'];
+  var proteinGrams = Math.round((tdee * ratio.protein / 100) / 4);
+  var carbGrams = Math.round((tdee * ratio.carb / 100) / 4);
+  var fatGrams = Math.round((tdee * ratio.fat / 100) / 9);
+  var maxGrams = Math.max(proteinGrams, carbGrams, fatGrams);
+
   var html = '<div class="result-main">' +
     '<p class="result-label">Your TDEE</p>' +
     '<p class="result-value">' + Math.round(tdee) + '<span class="result-unit">cal/day</span></p>' +
@@ -225,7 +244,22 @@ function calculateTDEE() {
     '<div class="result-detail-item"><p class="result-detail-label">Maintain</p><p class="result-detail-value">' + Math.round(tdee) + '</p></div>' +
     '<div class="result-detail-item"><p class="result-detail-label">Lean Bulk</p><p class="result-detail-value">' + Math.round(tdee + 300) + '</p></div>' +
   '</div>' +
-  '<p class="info-note mt-1">Calculated using the Mifflin-St Jeor equation. BMR is your resting metabolic rate — the calories your body needs at complete rest. TDEE factors in your activity level.</p>';
+  '<div class="macro-section mt-2">' +
+    '<p class="macro-section-title">Macro Breakdown &middot; ' + ratio.label + '</p>' +
+    '<div class="macro-bar">' +
+      '<div class="macro-bar-header"><span class="macro-bar-name">Protein (' + ratio.protein + '%)</span><span class="macro-bar-value">' + proteinGrams + 'g &middot; ' + Math.round(tdee * ratio.protein / 100) + ' cal</span></div>' +
+      '<div class="result-bar"><div class="result-bar-fill protein" style="width: ' + (proteinGrams / maxGrams * 100) + '%"></div></div>' +
+    '</div>' +
+    '<div class="macro-bar">' +
+      '<div class="macro-bar-header"><span class="macro-bar-name">Carbs (' + ratio.carb + '%)</span><span class="macro-bar-value">' + carbGrams + 'g &middot; ' + Math.round(tdee * ratio.carb / 100) + ' cal</span></div>' +
+      '<div class="result-bar"><div class="result-bar-fill carbs" style="width: ' + (carbGrams / maxGrams * 100) + '%"></div></div>' +
+    '</div>' +
+    '<div class="macro-bar">' +
+      '<div class="macro-bar-header"><span class="macro-bar-name">Fat (' + ratio.fat + '%)</span><span class="macro-bar-value">' + fatGrams + 'g &middot; ' + Math.round(tdee * ratio.fat / 100) + ' cal</span></div>' +
+      '<div class="result-bar"><div class="result-bar-fill fat" style="width: ' + (fatGrams / maxGrams * 100) + '%"></div></div>' +
+    '</div>' +
+  '</div>' +
+  '<p class="info-note mt-1">Calculated using the Mifflin-St Jeor equation. Macro grams are based on your selected ratio applied to your TDEE. Adjust the ratio above to see different splits.</p>';
 
   showResult('tdee-result', html);
 }
@@ -292,206 +326,6 @@ function calculateOneRepMax() {
   showResult('orm-result', html);
 }
 
-// --- Body Fat % Calculator (US Navy Method) ---
-
-function toggleBFFields() {
-  var sex = document.getElementById('bf-sex').value;
-  var hipGroup = document.querySelector('.bf-hip-group');
-  if (sex === 'female') {
-    hipGroup.style.display = 'block';
-  } else {
-    hipGroup.style.display = 'none';
-  }
-}
-
-function calculateBodyFat() {
-  var unit = getUnitSystem('body-fat');
-  var sex = document.getElementById('bf-sex').value;
-  var heightCm;
-
-  if (unit === 'imperial') {
-    var feet = parseFloat(document.getElementById('bf-feet').value);
-    var inches = parseFloat(document.getElementById('bf-inches').value) || 0;
-    if (isNaN(feet) || feet <= 0) {
-      showResult('bf-result', '<div class="result-main"><p class="text-danger">Please fill in all required fields.</p></div>');
-      return;
-    }
-    heightCm = feetInchesToCm(feet, inches);
-  } else {
-    heightCm = parseFloat(document.getElementById('bf-cm').value);
-    if (isNaN(heightCm) || heightCm <= 0) {
-      showResult('bf-result', '<div class="result-main"><p class="text-danger">Please fill in all required fields.</p></div>');
-      return;
-    }
-  }
-
-  var neckVal = parseFloat(document.getElementById('bf-neck').value);
-  var waistVal = parseFloat(document.getElementById('bf-waist').value);
-
-  if (isNaN(neckVal) || isNaN(waistVal) || neckVal <= 0 || waistVal <= 0) {
-    showResult('bf-result', '<div class="result-main"><p class="text-danger">Please fill in all required fields.</p></div>');
-    return;
-  }
-
-  // Convert to cm if imperial
-  var neckCm = unit === 'imperial' ? inchesToCm(neckVal) : neckVal;
-  var waistCm = unit === 'imperial' ? inchesToCm(waistVal) : waistVal;
-
-  var bodyFat;
-
-  if (sex === 'male') {
-    // US Navy formula for men
-    bodyFat = 495 / (1.0324 - 0.19077 * Math.log10(waistCm - neckCm) + 0.15456 * Math.log10(heightCm)) - 450;
-  } else {
-    var hipVal = parseFloat(document.getElementById('bf-hip').value);
-    if (isNaN(hipVal) || hipVal <= 0) {
-      showResult('bf-result', '<div class="result-main"><p class="text-danger">Please enter hip circumference (required for women).</p></div>');
-      return;
-    }
-    var hipCm = unit === 'imperial' ? inchesToCm(hipVal) : hipVal;
-    // US Navy formula for women
-    bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(waistCm + hipCm - neckCm) + 0.22100 * Math.log10(heightCm)) - 450;
-  }
-
-  bodyFat = Math.max(2, Math.min(bodyFat, 60));
-
-  var category, catClass;
-  if (sex === 'male') {
-    if (bodyFat < 6) { category = 'Essential Fat'; catClass = 'cat-under'; }
-    else if (bodyFat < 14) { category = 'Athletic'; catClass = 'cat-normal'; }
-    else if (bodyFat < 18) { category = 'Fitness'; catClass = 'cat-normal'; }
-    else if (bodyFat < 25) { category = 'Average'; catClass = 'cat-over'; }
-    else { category = 'Above Average'; catClass = 'cat-obese'; }
-  } else {
-    if (bodyFat < 14) { category = 'Essential Fat'; catClass = 'cat-under'; }
-    else if (bodyFat < 21) { category = 'Athletic'; catClass = 'cat-normal'; }
-    else if (bodyFat < 25) { category = 'Fitness'; catClass = 'cat-normal'; }
-    else if (bodyFat < 32) { category = 'Average'; catClass = 'cat-over'; }
-    else { category = 'Above Average'; catClass = 'cat-obese'; }
-  }
-
-  var barWidth = Math.min(bodyFat / (sex === 'male' ? 40 : 50) * 100, 100);
-
-  var html = '<div class="result-main">' +
-    '<p class="result-label">Estimated Body Fat</p>' +
-    '<p class="result-value">' + bodyFat.toFixed(1) + '<span class="result-unit">%</span></p>' +
-    '<span class="result-category ' + catClass + '">' + category + '</span>' +
-  '</div>' +
-  '<div class="result-bar-wrap">' +
-    '<div class="result-bar-label"><span>0%</span><span>' + (sex === 'male' ? '40%' : '50%') + '</span></div>' +
-    '<div class="result-bar"><div class="result-bar-fill" style="width: ' + barWidth + '%"></div></div>' +
-  '</div>' +
-  '<p class="info-note">Estimated using the U.S. Navy circumference method. For more accurate results, consider DEXA scanning or hydrostatic weighing.</p>';
-
-  showResult('bf-result', html);
-}
-
-// --- Macro Calculator ---
-
-function calculateMacros() {
-  var unit = getUnitSystem('macro');
-  var heightCm, weightKg;
-
-  if (unit === 'imperial') {
-    var feet = parseFloat(document.getElementById('macro-feet').value);
-    var inches = parseFloat(document.getElementById('macro-inches').value) || 0;
-    var weight = parseFloat(document.getElementById('macro-weight').value);
-    if (isNaN(feet) || isNaN(weight) || feet <= 0 || weight <= 0) {
-      showResult('macro-result', '<div class="result-main"><p class="text-danger">Please fill in all required fields.</p></div>');
-      return;
-    }
-    heightCm = feetInchesToCm(feet, inches);
-    weightKg = lbsToKg(weight);
-  } else {
-    heightCm = parseFloat(document.getElementById('macro-cm').value);
-    weightKg = parseFloat(document.getElementById('macro-weight').value);
-    if (isNaN(heightCm) || isNaN(weightKg) || heightCm <= 0 || weightKg <= 0) {
-      showResult('macro-result', '<div class="result-main"><p class="text-danger">Please fill in all required fields.</p></div>');
-      return;
-    }
-  }
-
-  var sex = document.getElementById('macro-sex').value;
-  var age = parseFloat(document.getElementById('macro-age').value);
-  var activity = parseFloat(document.getElementById('macro-activity').value);
-  var goal = document.getElementById('macro-goal').value;
-
-  if (isNaN(age) || age <= 0) {
-    showResult('macro-result', '<div class="result-main"><p class="text-danger">Please enter your age.</p></div>');
-    return;
-  }
-
-  // BMR (Mifflin-St Jeor)
-  var bmr;
-  if (sex === 'male') {
-    bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5;
-  } else {
-    bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
-  }
-
-  var tdee = bmr * activity;
-  var targetCal;
-
-  if (goal === 'cut') {
-    targetCal = tdee - 500;
-  } else if (goal === 'bulk') {
-    targetCal = tdee + 300;
-  } else {
-    targetCal = tdee;
-  }
-
-  // Macro splits
-  var proteinGrams, fatGrams, carbGrams;
-
-  if (goal === 'cut') {
-    // High protein for muscle retention
-    proteinGrams = weightKg * 2.2; // ~1g per lb
-    fatGrams = weightKg * 0.9;
-    carbGrams = (targetCal - (proteinGrams * 4) - (fatGrams * 9)) / 4;
-  } else if (goal === 'bulk') {
-    proteinGrams = weightKg * 2.0;
-    fatGrams = weightKg * 0.9;
-    carbGrams = (targetCal - (proteinGrams * 4) - (fatGrams * 9)) / 4;
-  } else {
-    proteinGrams = weightKg * 1.8;
-    fatGrams = weightKg * 0.9;
-    carbGrams = (targetCal - (proteinGrams * 4) - (fatGrams * 9)) / 4;
-  }
-
-  carbGrams = Math.max(carbGrams, 50); // minimum carbs
-
-  var proteinCal = proteinGrams * 4;
-  var carbCal = carbGrams * 4;
-  var fatCal = fatGrams * 9;
-  var totalCal = proteinCal + carbCal + fatCal;
-
-  var proteinPct = Math.round(proteinCal / totalCal * 100);
-  var carbPct = Math.round(carbCal / totalCal * 100);
-  var fatPct = 100 - proteinPct - carbPct;
-
-  var maxGrams = Math.max(proteinGrams, carbGrams, fatGrams);
-
-  var html = '<div class="result-main">' +
-    '<p class="result-label">Daily Calorie Target</p>' +
-    '<p class="result-value">' + Math.round(targetCal) + '<span class="result-unit">cal</span></p>' +
-  '</div>' +
-  '<div class="macro-bar">' +
-    '<div class="macro-bar-header"><span class="macro-bar-name">Protein (' + proteinPct + '%)</span><span class="macro-bar-value">' + Math.round(proteinGrams) + 'g &middot; ' + Math.round(proteinCal) + ' cal</span></div>' +
-    '<div class="result-bar"><div class="result-bar-fill protein" style="width: ' + (proteinGrams / maxGrams * 100) + '%"></div></div>' +
-  '</div>' +
-  '<div class="macro-bar">' +
-    '<div class="macro-bar-header"><span class="macro-bar-name">Carbs (' + carbPct + '%)</span><span class="macro-bar-value">' + Math.round(carbGrams) + 'g &middot; ' + Math.round(carbCal) + ' cal</span></div>' +
-    '<div class="result-bar"><div class="result-bar-fill carbs" style="width: ' + (carbGrams / maxGrams * 100) + '%"></div></div>' +
-  '</div>' +
-  '<div class="macro-bar">' +
-    '<div class="macro-bar-header"><span class="macro-bar-name">Fat (' + fatPct + '%)</span><span class="macro-bar-value">' + Math.round(fatGrams) + 'g &middot; ' + Math.round(fatCal) + ' cal</span></div>' +
-    '<div class="result-bar"><div class="result-bar-fill fat" style="width: ' + (fatGrams / maxGrams * 100) + '%"></div></div>' +
-  '</div>' +
-  '<p class="info-note mt-1">Protein set at ~' + (goal === 'cut' ? '1g' : goal === 'bulk' ? '0.9g' : '0.8g') + '/lb body weight. Adjust based on your training intensity and individual response.</p>';
-
-  showResult('macro-result', html);
-}
-
 // --- Wilks Score Calculator ---
 
 function calculateWilks() {
@@ -556,81 +390,3 @@ function calculateWilks() {
   showResult('wilks-result', html);
 }
 
-// --- Calorie Calculator ---
-
-function calculateCalories() {
-  var unit = getUnitSystem('calorie');
-  var heightCm, weightKg;
-
-  if (unit === 'imperial') {
-    var feet = parseFloat(document.getElementById('cal-feet').value);
-    var inches = parseFloat(document.getElementById('cal-inches').value) || 0;
-    var weight = parseFloat(document.getElementById('cal-weight').value);
-    if (isNaN(feet) || isNaN(weight) || feet <= 0 || weight <= 0) {
-      showResult('cal-result', '<div class="result-main"><p class="text-danger">Please fill in all required fields.</p></div>');
-      return;
-    }
-    heightCm = feetInchesToCm(feet, inches);
-    weightKg = lbsToKg(weight);
-  } else {
-    heightCm = parseFloat(document.getElementById('cal-cm').value);
-    weightKg = parseFloat(document.getElementById('cal-weight').value);
-    if (isNaN(heightCm) || isNaN(weightKg) || heightCm <= 0 || weightKg <= 0) {
-      showResult('cal-result', '<div class="result-main"><p class="text-danger">Please fill in all required fields.</p></div>');
-      return;
-    }
-  }
-
-  var sex = document.getElementById('cal-sex').value;
-  var age = parseFloat(document.getElementById('cal-age').value);
-  var activity = parseFloat(document.getElementById('cal-activity').value);
-  var goal = document.getElementById('cal-goal').value;
-
-  if (isNaN(age) || age <= 0) {
-    showResult('cal-result', '<div class="result-main"><p class="text-danger">Please enter your age.</p></div>');
-    return;
-  }
-
-  var bmr;
-  if (sex === 'male') {
-    bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) + 5;
-  } else {
-    bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age) - 161;
-  }
-
-  var tdee = bmr * activity;
-  var adjustments = {
-    'lose-fast': -1000,
-    'lose': -500,
-    'maintain': 0,
-    'gain': 300,
-    'gain-fast': 500
-  };
-  var target = tdee + (adjustments[goal] || 0);
-  target = Math.max(target, 1200); // safety floor
-
-  var goalLabel = {
-    'lose-fast': 'Aggressive Cut',
-    'lose': 'Fat Loss',
-    'maintain': 'Maintenance',
-    'gain': 'Lean Bulk',
-    'gain-fast': 'Bulk'
-  };
-
-  // Weekly projection
-  var weeklyChange = (adjustments[goal] || 0) * 7 / 3500; // lbs per week
-
-  var html = '<div class="result-main">' +
-    '<p class="result-label">Daily Calorie Target &middot; ' + goalLabel[goal] + '</p>' +
-    '<p class="result-value">' + Math.round(target) + '<span class="result-unit">cal/day</span></p>' +
-  '</div>' +
-  '<div class="result-details">' +
-    '<div class="result-detail-item"><p class="result-detail-label">BMR</p><p class="result-detail-value">' + Math.round(bmr) + '</p></div>' +
-    '<div class="result-detail-item"><p class="result-detail-label">TDEE</p><p class="result-detail-value accent">' + Math.round(tdee) + '</p></div>' +
-    '<div class="result-detail-item"><p class="result-detail-label">Weekly Cals</p><p class="result-detail-value">' + Math.round(target * 7).toLocaleString() + '</p></div>' +
-    '<div class="result-detail-item"><p class="result-detail-label">Est. Weekly Change</p><p class="result-detail-value">' + (weeklyChange >= 0 ? '+' : '') + weeklyChange.toFixed(1) + ' lbs</p></div>' +
-  '</div>' +
-  '<p class="info-note mt-1">These are estimates. Track your weight over 2-3 weeks and adjust by 100-200 calories if you\'re not seeing expected progress.</p>';
-
-  showResult('cal-result', html);
-}

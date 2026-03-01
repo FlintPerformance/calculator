@@ -562,6 +562,21 @@ select option {
   transition: width 0.6s ease;
 }
 
+/* Macro section in TDEE results */
+.macro-section {
+  border-top: 1px solid var(--border);
+  padding-top: 1.25rem;
+}
+
+.macro-section-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  margin-bottom: 1rem;
+}
+
 /* Macro result bars */
 .macro-bar {
   margin-bottom: 1rem;
