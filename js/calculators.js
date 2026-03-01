@@ -27,6 +27,10 @@ function showResult(elementId, html) {
   var el = document.getElementById(elementId);
   el.innerHTML = html;
   el.classList.add('show');
+  // Scroll result into view
+  setTimeout(function () {
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
 }
 
 function validateInputs(ids) {

@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#060606">
   <title>Flint Performance | Fitness Calculators</title>
   <link rel="stylesheet" href="css/styles.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,193 +15,179 @@
 <body>
   <a href="#main-content" class="skip-link">Skip to content</a>
   <div id="app">
-    <!-- Header -->
-    <header class="header">
-      <div class="header-inner">
-        <div class="logo">
-          <span class="logo-text">FLINT<span class="logo-dot">.</span></span>
-        </div>
-        <p class="header-tagline">Fitness Calculators</p>
-      </div>
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+      <span class="top-bar-logo">FLINT<span class="logo-dot">.</span></span>
+      <span class="top-bar-title" id="active-calc-title">BMI</span>
     </header>
 
-    <!-- Calculator Navigation -->
-    <nav class="calc-nav">
-      <div class="calc-nav-inner">
-        <button class="calc-nav-btn active" data-calc="bmi">BMI</button>
-        <button class="calc-nav-btn" data-calc="ffmi">FFMI</button>
-        <button class="calc-nav-btn" data-calc="tdee">TDEE</button>
-        <button class="calc-nav-btn" data-calc="one-rep-max">1RM</button>
-        <button class="calc-nav-btn" data-calc="wilks">Wilks</button>
-      </div>
-    </nav>
+    <!-- Screens -->
+    <main class="screens" id="main-content">
 
-    <!-- Calculator Panels -->
-    <main class="main" id="main-content">
-
-      <!-- BMI Calculator -->
-      <section class="calc-panel active" id="calc-bmi">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>BMI Calculator</h2>
-            <p class="calc-desc">Body Mass Index — a simple measure of body weight relative to height.</p>
+      <!-- BMI -->
+      <section class="screen active" id="calc-bmi">
+        <div class="screen-scroll">
+          <div class="screen-hero">
+            <h2 class="screen-title">BMI</h2>
+            <p class="screen-subtitle">Body Mass Index</p>
           </div>
-          <div class="calc-body">
+          <div class="screen-form">
             <div class="unit-toggle">
               <button class="unit-btn active" data-unit="imperial">Imperial</button>
               <button class="unit-btn" data-unit="metric">Metric</button>
             </div>
-            <div class="form-group imperial-fields">
+            <div class="field imperial-fields">
               <label>Height</label>
-              <div class="input-row">
-                <div class="input-wrap">
-                  <input type="number" id="bmi-feet" placeholder="5" min="1" max="8">
-                  <span class="input-unit">ft</span>
+              <div class="field-row">
+                <div class="field-input">
+                  <input type="number" id="bmi-feet" data-sync="feet" placeholder="5" min="1" max="8">
+                  <span class="field-unit">ft</span>
                 </div>
-                <div class="input-wrap">
-                  <input type="number" id="bmi-inches" placeholder="10" min="0" max="11">
-                  <span class="input-unit">in</span>
+                <div class="field-input">
+                  <input type="number" id="bmi-inches" data-sync="inches" placeholder="10" min="0" max="11">
+                  <span class="field-unit">in</span>
                 </div>
               </div>
             </div>
-            <div class="form-group metric-fields" style="display:none;">
+            <div class="field metric-fields" style="display:none;">
               <label>Height</label>
-              <div class="input-wrap">
-                <input type="number" id="bmi-cm" placeholder="178" min="50" max="250">
-                <span class="input-unit">cm</span>
+              <div class="field-input">
+                <input type="number" id="bmi-cm" data-sync="cm" placeholder="178" min="50" max="250">
+                <span class="field-unit">cm</span>
               </div>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Weight</label>
-              <div class="input-wrap">
-                <input type="number" id="bmi-weight" placeholder="180" min="1">
-                <span class="input-unit dynamic-weight-unit">lbs</span>
+              <div class="field-input">
+                <input type="number" id="bmi-weight" data-sync="weight" placeholder="180" min="1">
+                <span class="field-unit dynamic-weight-unit">lbs</span>
               </div>
             </div>
-            <button class="calc-btn" onclick="calculateBMI()">Calculate BMI</button>
+            <button class="action-btn" onclick="calculateBMI()">Calculate</button>
           </div>
-          <div class="calc-result" id="bmi-result"></div>
+          <div class="screen-result" id="bmi-result"></div>
         </div>
       </section>
 
-      <!-- FFMI Calculator -->
-      <section class="calc-panel" id="calc-ffmi">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>FFMI Calculator</h2>
-            <p class="calc-desc">Fat-Free Mass Index — measures the amount of muscle relative to height, adjusted for body fat.</p>
+      <!-- FFMI -->
+      <section class="screen" id="calc-ffmi">
+        <div class="screen-scroll">
+          <div class="screen-hero">
+            <h2 class="screen-title">FFMI</h2>
+            <p class="screen-subtitle">Fat-Free Mass Index</p>
           </div>
-          <div class="calc-body">
+          <div class="screen-form">
             <div class="unit-toggle">
               <button class="unit-btn active" data-unit="imperial">Imperial</button>
               <button class="unit-btn" data-unit="metric">Metric</button>
             </div>
-            <div class="form-group imperial-fields">
+            <div class="field imperial-fields">
               <label>Height</label>
-              <div class="input-row">
-                <div class="input-wrap">
-                  <input type="number" id="ffmi-feet" placeholder="5" min="1" max="8">
-                  <span class="input-unit">ft</span>
+              <div class="field-row">
+                <div class="field-input">
+                  <input type="number" id="ffmi-feet" data-sync="feet" placeholder="5" min="1" max="8">
+                  <span class="field-unit">ft</span>
                 </div>
-                <div class="input-wrap">
-                  <input type="number" id="ffmi-inches" placeholder="10" min="0" max="11">
-                  <span class="input-unit">in</span>
+                <div class="field-input">
+                  <input type="number" id="ffmi-inches" data-sync="inches" placeholder="10" min="0" max="11">
+                  <span class="field-unit">in</span>
                 </div>
               </div>
             </div>
-            <div class="form-group metric-fields" style="display:none;">
+            <div class="field metric-fields" style="display:none;">
               <label>Height</label>
-              <div class="input-wrap">
-                <input type="number" id="ffmi-cm" placeholder="178" min="50" max="250">
-                <span class="input-unit">cm</span>
+              <div class="field-input">
+                <input type="number" id="ffmi-cm" data-sync="cm" placeholder="178" min="50" max="250">
+                <span class="field-unit">cm</span>
               </div>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Weight</label>
-              <div class="input-wrap">
-                <input type="number" id="ffmi-weight" placeholder="180" min="1">
-                <span class="input-unit dynamic-weight-unit">lbs</span>
+              <div class="field-input">
+                <input type="number" id="ffmi-weight" data-sync="weight" placeholder="180" min="1">
+                <span class="field-unit dynamic-weight-unit">lbs</span>
               </div>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Body Fat %</label>
-              <div class="input-wrap">
+              <div class="field-input">
                 <input type="number" id="ffmi-bf" placeholder="15" min="1" max="60">
-                <span class="input-unit">%</span>
+                <span class="field-unit">%</span>
               </div>
             </div>
-            <button class="calc-btn" onclick="calculateFFMI()">Calculate FFMI</button>
+            <button class="action-btn" onclick="calculateFFMI()">Calculate</button>
           </div>
-          <div class="calc-result" id="ffmi-result"></div>
+          <div class="screen-result" id="ffmi-result"></div>
         </div>
       </section>
 
-      <!-- TDEE Calculator -->
-      <section class="calc-panel" id="calc-tdee">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>TDEE Calculator</h2>
-            <p class="calc-desc">Total Daily Energy Expenditure — estimates how many calories you burn per day.</p>
+      <!-- TDEE -->
+      <section class="screen" id="calc-tdee">
+        <div class="screen-scroll">
+          <div class="screen-hero">
+            <h2 class="screen-title">TDEE</h2>
+            <p class="screen-subtitle">Total Daily Energy Expenditure</p>
           </div>
-          <div class="calc-body">
+          <div class="screen-form">
             <div class="unit-toggle">
               <button class="unit-btn active" data-unit="imperial">Imperial</button>
               <button class="unit-btn" data-unit="metric">Metric</button>
             </div>
-            <div class="form-row">
-              <div class="form-group">
+            <div class="field-row">
+              <div class="field">
                 <label>Sex</label>
-                <select id="tdee-sex">
+                <select id="tdee-sex" data-sync="sex">
                   <option value="male">Male</option>
                   <option value="female">Female</option>
                 </select>
               </div>
-              <div class="form-group">
+              <div class="field">
                 <label>Age</label>
-                <div class="input-wrap">
-                  <input type="number" id="tdee-age" placeholder="25" min="10" max="100">
-                  <span class="input-unit">yrs</span>
+                <div class="field-input">
+                  <input type="number" id="tdee-age" data-sync="age" placeholder="25" min="10" max="100">
+                  <span class="field-unit">yrs</span>
                 </div>
               </div>
             </div>
-            <div class="form-group imperial-fields">
+            <div class="field imperial-fields">
               <label>Height</label>
-              <div class="input-row">
-                <div class="input-wrap">
-                  <input type="number" id="tdee-feet" placeholder="5" min="1" max="8">
-                  <span class="input-unit">ft</span>
+              <div class="field-row">
+                <div class="field-input">
+                  <input type="number" id="tdee-feet" data-sync="feet" placeholder="5" min="1" max="8">
+                  <span class="field-unit">ft</span>
                 </div>
-                <div class="input-wrap">
-                  <input type="number" id="tdee-inches" placeholder="10" min="0" max="11">
-                  <span class="input-unit">in</span>
+                <div class="field-input">
+                  <input type="number" id="tdee-inches" data-sync="inches" placeholder="10" min="0" max="11">
+                  <span class="field-unit">in</span>
                 </div>
               </div>
             </div>
-            <div class="form-group metric-fields" style="display:none;">
+            <div class="field metric-fields" style="display:none;">
               <label>Height</label>
-              <div class="input-wrap">
-                <input type="number" id="tdee-cm" placeholder="178" min="50" max="250">
-                <span class="input-unit">cm</span>
+              <div class="field-input">
+                <input type="number" id="tdee-cm" data-sync="cm" placeholder="178" min="50" max="250">
+                <span class="field-unit">cm</span>
               </div>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Weight</label>
-              <div class="input-wrap">
-                <input type="number" id="tdee-weight" placeholder="180" min="1">
-                <span class="input-unit dynamic-weight-unit">lbs</span>
+              <div class="field-input">
+                <input type="number" id="tdee-weight" data-sync="weight" placeholder="180" min="1">
+                <span class="field-unit dynamic-weight-unit">lbs</span>
               </div>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Activity Level</label>
               <select id="tdee-activity">
-                <option value="1.2">Sedentary (office job, little exercise)</option>
-                <option value="1.375">Lightly Active (1-3 days/week)</option>
-                <option value="1.55" selected>Moderately Active (3-5 days/week)</option>
-                <option value="1.725">Very Active (6-7 days/week)</option>
-                <option value="1.9">Extremely Active (athlete / physical job)</option>
+                <option value="1.2">Sedentary (office job)</option>
+                <option value="1.375">Lightly Active (1-3 days/wk)</option>
+                <option value="1.55" selected>Moderately Active (3-5 days/wk)</option>
+                <option value="1.725">Very Active (6-7 days/wk)</option>
+                <option value="1.9">Extremely Active (athlete)</option>
               </select>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Macro Ratio</label>
               <select id="tdee-macro-ratio">
                 <option value="balanced">Balanced (40/30/30 — C/P/F)</option>
@@ -209,81 +198,101 @@
                 <option value="zone">Zone Diet (40/30/30 — C/P/F)</option>
               </select>
             </div>
-            <button class="calc-btn" onclick="calculateTDEE()">Calculate TDEE</button>
+            <button class="action-btn" onclick="calculateTDEE()">Calculate</button>
           </div>
-          <div class="calc-result" id="tdee-result"></div>
+          <div class="screen-result" id="tdee-result"></div>
         </div>
       </section>
 
-      <!-- 1 Rep Max Calculator -->
-      <section class="calc-panel" id="calc-one-rep-max">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>1 Rep Max Calculator</h2>
-            <p class="calc-desc">Estimate your one-rep maximum based on weight lifted and reps completed.</p>
+      <!-- 1RM -->
+      <section class="screen" id="calc-one-rep-max">
+        <div class="screen-scroll">
+          <div class="screen-hero">
+            <h2 class="screen-title">1RM</h2>
+            <p class="screen-subtitle">One Rep Max Estimator</p>
           </div>
-          <div class="calc-body">
-            <div class="form-group">
+          <div class="screen-form">
+            <div class="field">
               <label>Weight Lifted</label>
-              <div class="input-wrap">
+              <div class="field-input">
                 <input type="number" id="orm-weight" placeholder="225" min="1">
-                <span class="input-unit">lbs</span>
+                <span class="field-unit">lbs</span>
               </div>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Reps Performed</label>
-              <div class="input-wrap">
+              <div class="field-input">
                 <input type="number" id="orm-reps" placeholder="5" min="1" max="30">
-                <span class="input-unit">reps</span>
+                <span class="field-unit">reps</span>
               </div>
             </div>
-            <button class="calc-btn" onclick="calculateOneRepMax()">Calculate 1RM</button>
+            <button class="action-btn" onclick="calculateOneRepMax()">Calculate</button>
           </div>
-          <div class="calc-result" id="orm-result"></div>
+          <div class="screen-result" id="orm-result"></div>
         </div>
       </section>
 
-      <!-- Wilks Score Calculator -->
-      <section class="calc-panel" id="calc-wilks">
-        <div class="calc-card">
-          <div class="calc-header">
-            <h2>Wilks Score Calculator</h2>
-            <p class="calc-desc">Compare powerlifting strength across weight classes using the Wilks coefficient.</p>
+      <!-- Wilks -->
+      <section class="screen" id="calc-wilks">
+        <div class="screen-scroll">
+          <div class="screen-hero">
+            <h2 class="screen-title">WILKS</h2>
+            <p class="screen-subtitle">Strength Coefficient</p>
           </div>
-          <div class="calc-body">
-            <div class="form-group">
+          <div class="screen-form">
+            <div class="field">
               <label>Sex</label>
-              <select id="wilks-sex">
+              <select id="wilks-sex" data-sync="sex">
                 <option value="male">Male</option>
                 <option value="female">Female</option>
               </select>
             </div>
-            <div class="form-group">
+            <div class="field">
               <label>Body Weight</label>
-              <div class="input-wrap">
-                <input type="number" id="wilks-bw" placeholder="180" min="1">
-                <span class="input-unit">lbs</span>
+              <div class="field-input">
+                <input type="number" id="wilks-bw" data-sync="weight" placeholder="180" min="1">
+                <span class="field-unit">lbs</span>
               </div>
             </div>
-            <div class="form-group">
-              <label>Total (Squat + Bench + Deadlift)</label>
-              <div class="input-wrap">
+            <div class="field">
+              <label>Total (S + B + D)</label>
+              <div class="field-input">
                 <input type="number" id="wilks-total" placeholder="1000" min="1">
-                <span class="input-unit">lbs</span>
+                <span class="field-unit">lbs</span>
               </div>
             </div>
-            <button class="calc-btn" onclick="calculateWilks()">Calculate Wilks</button>
+            <button class="action-btn" onclick="calculateWilks()">Calculate</button>
           </div>
-          <div class="calc-result" id="wilks-result"></div>
+          <div class="screen-result" id="wilks-result"></div>
         </div>
       </section>
 
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-      <p>&copy; 2026 Flint Performance. All rights reserved.</p>
-    </footer>
+    <!-- Bottom Tab Bar -->
+    <nav class="tab-bar">
+      <button class="tab active" data-calc="bmi">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2a4 4 0 1 1 0 8 4 4 0 0 1 0-8z"/><path d="M6 22v-4a6 6 0 0 1 12 0v4"/></svg>
+        <span>BMI</span>
+      </button>
+      <button class="tab" data-calc="ffmi">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6.5 6.5L4 4m0 0l2.5 2.5M4 4l2.5-2.5M4 4L1.5 6.5"/><path d="M17.5 6.5L20 4m0 0l-2.5 2.5M20 4l-2.5-2.5M20 4l2.5 2.5"/><rect x="8" y="8" width="8" height="14" rx="1"/><line x1="12" y1="8" x2="12" y2="22"/></svg>
+        <span>FFMI</span>
+      </button>
+      <button class="tab" data-calc="tdee">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4.5 2.5"/></svg>
+        <span>TDEE</span>
+      </button>
+      <button class="tab" data-calc="one-rep-max">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="9" width="4" height="6" rx="1"/><rect x="19" y="9" width="4" height="6" rx="1"/><line x1="5" y1="12" x2="19" y2="12"/><rect x="7" y="7" width="3" height="10" rx="0.5"/><rect x="14" y="7" width="3" height="10" rx="0.5"/></svg>
+        <span>1RM</span>
+      </button>
+      <button class="tab" data-calc="wilks">
+        <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 21l4-12 4 12"/><path d="M6 17h12"/><path d="M12 3v6"/><circle cx="12" cy="3" r="1.5"/></svg>
+        <span>Wilks</span>
+      </button>
+    </nav>
+
   </div>
 
   <script src="js/calculators.js"></script>

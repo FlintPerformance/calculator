@@ -1,92 +1,109 @@
 /* ============================================
    FLINT PERFORMANCE — App Controller
-   Navigation, unit toggling, and interactivity
+   Tab navigation, shared data sync, unit toggle
    ============================================ */
 
 (function () {
   'use strict';
 
-  // --- Calculator Navigation ---
+  // --- Tab Navigation ---
 
-  var navBtns = document.querySelectorAll('.calc-nav-btn');
-  var panels = document.querySelectorAll('.calc-panel');
+  var tabs = document.querySelectorAll('.tab');
+  var screens = document.querySelectorAll('.screen');
+  var titleEl = document.getElementById('active-calc-title');
 
-  navBtns.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var targetCalc = btn.dataset.calc;
+  var tabTitles = {
+    'bmi': 'BMI',
+    'ffmi': 'FFMI',
+    'tdee': 'TDEE',
+    'one-rep-max': '1 REP MAX',
+    'wilks': 'WILKS'
+  };
 
-      // Update active nav button
-      navBtns.forEach(function (b) { b.classList.remove('active'); });
-      btn.classList.add('active');
+  tabs.forEach(function (tab) {
+    tab.addEventListener('click', function () {
+      var targetCalc = tab.dataset.calc;
 
-      // Update active panel
-      panels.forEach(function (p) { p.classList.remove('active'); });
-      var targetPanel = document.getElementById('calc-' + targetCalc);
-      if (targetPanel) {
-        targetPanel.classList.add('active');
-      }
+      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tab.classList.add('active');
 
-      // Scroll nav button into view on mobile
-      btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      screens.forEach(function (s) { s.classList.remove('active'); });
+      var target = document.getElementById('calc-' + targetCalc);
+      if (target) target.classList.add('active');
+
+      if (titleEl) titleEl.textContent = tabTitles[targetCalc] || '';
     });
   });
 
-  // --- Unit Toggle System ---
+  // --- Shared Data Sync ---
+  // Inputs with data-sync="weight" etc. propagate values across all calculators
+
+  var syncKeys = ['weight', 'feet', 'inches', 'cm', 'sex', 'age'];
+
+  syncKeys.forEach(function (key) {
+    var fields = document.querySelectorAll('[data-sync="' + key + '"]');
+    fields.forEach(function (field) {
+      var eventName = field.tagName === 'SELECT' ? 'change' : 'input';
+      field.addEventListener(eventName, function () {
+        var val = field.value;
+        fields.forEach(function (other) {
+          if (other !== field) other.value = val;
+        });
+      });
+    });
+  });
+
+  // --- Global Unit Toggle Sync ---
+  // When you switch units on one calculator, all calculators switch
 
   document.querySelectorAll('.unit-toggle').forEach(function (toggle) {
-    var panel = toggle.closest('.calc-panel');
     var unitBtns = toggle.querySelectorAll('.unit-btn');
 
     unitBtns.forEach(function (btn) {
       btn.addEventListener('click', function () {
         var unit = btn.dataset.unit;
 
-        // Update active button
-        unitBtns.forEach(function (b) { b.classList.remove('active'); });
-        btn.classList.add('active');
-
-        // Show/hide imperial vs metric fields
-        var imperialFields = panel.querySelectorAll('.imperial-fields');
-        var metricFields = panel.querySelectorAll('.metric-fields');
-
-        if (unit === 'metric') {
-          imperialFields.forEach(function (f) { f.style.display = 'none'; });
-          metricFields.forEach(function (f) { f.style.display = 'block'; });
-        } else {
-          imperialFields.forEach(function (f) { f.style.display = 'block'; });
-          metricFields.forEach(function (f) { f.style.display = 'none'; });
-        }
-
-        // Update weight unit labels
-        var weightUnits = panel.querySelectorAll('.dynamic-weight-unit');
-        weightUnits.forEach(function (el) {
-          el.textContent = unit === 'metric' ? 'kg' : 'lbs';
+        // Sync ALL unit toggles across all screens
+        document.querySelectorAll('.unit-toggle').forEach(function (otherToggle) {
+          otherToggle.querySelectorAll('.unit-btn').forEach(function (b) {
+            b.classList.toggle('active', b.dataset.unit === unit);
+          });
         });
 
-        // Update length unit labels (for body fat calculator)
-        var lengthUnits = panel.querySelectorAll('.dynamic-length-unit');
-        lengthUnits.forEach(function (el) {
-          el.textContent = unit === 'metric' ? 'cm' : 'in';
+        // Show/hide imperial vs metric fields in ALL screens
+        document.querySelectorAll('.screen').forEach(function (screen) {
+          var imperialFields = screen.querySelectorAll('.imperial-fields');
+          var metricFields = screen.querySelectorAll('.metric-fields');
+
+          if (unit === 'metric') {
+            imperialFields.forEach(function (f) { f.style.display = 'none'; });
+            metricFields.forEach(function (f) { f.style.display = 'block'; });
+          } else {
+            imperialFields.forEach(function (f) { f.style.display = 'block'; });
+            metricFields.forEach(function (f) { f.style.display = 'none'; });
+          }
+
+          // Update weight unit labels
+          screen.querySelectorAll('.dynamic-weight-unit').forEach(function (el) {
+            el.textContent = unit === 'metric' ? 'kg' : 'lbs';
+          });
         });
 
-        // Hide result when switching units
-        var result = panel.querySelector('.calc-result');
-        if (result) {
-          result.classList.remove('show');
-        }
+        // Collapse any open results
+        document.querySelectorAll('.screen-result').forEach(function (r) {
+          r.classList.remove('show');
+        });
       });
     });
   });
 
-  // --- Keyboard support: Enter to calculate ---
+  // --- Keyboard: Enter to calculate ---
 
-  document.querySelectorAll('.calc-panel').forEach(function (panel) {
-    panel.addEventListener('keydown', function (e) {
+  document.querySelectorAll('.screen').forEach(function (screen) {
+    screen.addEventListener('keydown', function (e) {
       if (e.key === 'Enter') {
-        var calcBtn = panel.querySelector('.calc-btn');
-        if (calcBtn) {
-          calcBtn.click();
-        }
+        var btn = screen.querySelector('.action-btn');
+        if (btn) btn.click();
       }
     });
   });
