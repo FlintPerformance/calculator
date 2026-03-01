@@ -24,8 +24,12 @@
     tab.addEventListener('click', function () {
       var targetCalc = tab.dataset.calc;
 
-      tabs.forEach(function (t) { t.classList.remove('active'); });
+      tabs.forEach(function (t) {
+        t.classList.remove('active');
+        t.setAttribute('aria-selected', 'false');
+      });
       tab.classList.add('active');
+      tab.setAttribute('aria-selected', 'true');
 
       screens.forEach(function (s) { s.classList.remove('active'); });
       var target = document.getElementById('calc-' + targetCalc);
@@ -66,7 +70,9 @@
         // Sync ALL unit toggles across all screens
         document.querySelectorAll('.unit-toggle').forEach(function (otherToggle) {
           otherToggle.querySelectorAll('.unit-btn').forEach(function (b) {
-            b.classList.toggle('active', b.dataset.unit === unit);
+            var isActive = b.dataset.unit === unit;
+            b.classList.toggle('active', isActive);
+            b.setAttribute('aria-checked', isActive ? 'true' : 'false');
           });
         });
 

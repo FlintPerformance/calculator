@@ -1,6 +1,6 @@
 /* ============================================
    FLINT PERFORMANCE — App Theme
-   Native app feel, bottom tab bar, shared data
+   Responsive: mobile-first, scales to desktop
    ============================================ */
 
 :root {
@@ -26,9 +26,6 @@
   --font-logo: 'Barlow Condensed', sans-serif;
 
   --radius: 2px;
-  --tab-height: 64px;
-  --topbar-height: 48px;
-
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -42,7 +39,6 @@
 html, body {
   height: 100%;
   overflow: hidden;
-  touch-action: manipulation;
 }
 
 body {
@@ -53,11 +49,6 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   -webkit-tap-highlight-color: transparent;
-  user-select: none;
-}
-
-input, select, button {
-  user-select: auto;
 }
 
 #app {
@@ -72,7 +63,7 @@ input, select, button {
    ============================================ */
 
 .top-bar {
-  height: var(--topbar-height);
+  height: 48px;
   padding-top: var(--safe-top);
   display: flex;
   align-items: center;
@@ -167,6 +158,13 @@ input, select, button {
 
 .screen-form {
   padding-bottom: 8px;
+}
+
+/* Remove default fieldset styling from unit toggles */
+fieldset.unit-toggle {
+  border: none;
+  padding: 0;
+  margin: 0;
 }
 
 .field {
@@ -611,38 +609,235 @@ select option {
 }
 
 /* ============================================
-   Responsive — Larger screens
+   Desktop — Tablet (600px+)
    ============================================ */
 
 @media (min-width: 600px) {
-  .screens {
-    max-width: 480px;
-    margin: 0 auto;
-    width: 100%;
+  .screen-scroll {
+    padding: 0 32px 32px;
   }
 
-  .tab-bar {
-    max-width: 480px;
-    margin: 0 auto;
-    border-radius: 0;
+  .screen-hero {
+    padding: 32px 0 24px;
   }
 
-  .top-bar {
-    max-width: 480px;
-    margin: 0 auto;
+  .screen-title {
+    font-size: 3.8rem;
   }
 
-  /* Center the app column with subtle edges */
-  #app {
-    max-width: 480px;
-    margin: 0 auto;
-    border-left: 1px solid var(--border);
-    border-right: 1px solid var(--border);
+  .screen-subtitle {
+    font-size: 14px;
+  }
+
+  .field label {
+    font-size: 11px;
+  }
+
+  .result-value {
+    font-size: 5rem;
+  }
+
+  .result-detail-value {
+    font-size: 1.6rem;
+  }
+
+  .tab {
+    font-size: 10px;
+    gap: 4px;
+  }
+
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+/* ============================================
+   Desktop — Medium (768px+)
+   ============================================ */
+
+@media (min-width: 768px) {
+  /* Allow normal scrolling on desktop */
+  html, body {
+    overflow: auto;
   }
 
   body {
-    display: flex;
-    justify-content: center;
+    background: var(--gray);
+  }
+
+  #app {
+    max-width: 640px;
+    margin: 24px auto;
+    height: auto;
+    min-height: calc(100vh - 48px);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    overflow: hidden;
+    box-shadow:
+      0 0 0 1px rgba(240, 74, 14, 0.06),
+      0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .top-bar {
+    border-radius: 12px 12px 0 0;
+  }
+
+  .tab-bar {
+    border-radius: 0 0 12px 12px;
+    padding-bottom: 10px;
+  }
+
+  .screens {
+    min-height: 500px;
+  }
+
+  .screen-scroll {
+    padding: 0 40px 40px;
+  }
+
+  .screen-hero {
+    padding: 36px 0 28px;
+  }
+
+  .screen-title {
+    font-size: 4rem;
+  }
+
+  .field-input input {
+    height: 50px;
+  }
+
+  select {
+    height: 50px;
+  }
+
+  .action-btn {
+    height: 54px;
+    font-size: 13px;
+  }
+}
+
+/* ============================================
+   Desktop — Large (1024px+)
+   ============================================ */
+
+@media (min-width: 1024px) {
+  #app {
+    max-width: 720px;
+    margin: 40px auto;
+  }
+
+  .screen-scroll {
+    padding: 0 48px 48px;
+  }
+
+  .screen-hero {
+    padding: 40px 0 32px;
+  }
+
+  .screen-title {
+    font-size: 4.5rem;
+  }
+
+  .screen-subtitle {
+    font-size: 15px;
+    margin-top: 6px;
+  }
+
+  .field {
+    margin-bottom: 20px;
+  }
+
+  .field label {
+    font-size: 11px;
+    margin-bottom: 8px;
+  }
+
+  .field-row {
+    gap: 14px;
+  }
+
+  .field-input input {
+    height: 52px;
+    font-size: 16px;
+  }
+
+  select {
+    height: 52px;
+    font-size: 16px;
+  }
+
+  .action-btn {
+    height: 56px;
+    margin-top: 12px;
+  }
+
+  .result-value {
+    font-size: 5.5rem;
+  }
+
+  .result-details {
+    gap: 4px;
+  }
+
+  .result-detail-item {
+    padding: 16px 12px;
+  }
+
+  .result-detail-value {
+    font-size: 1.7rem;
+  }
+
+  .macro-bar-name {
+    font-size: 14px;
+  }
+
+  .macro-bar-value {
+    font-size: 13px;
+  }
+
+  .result-bar {
+    height: 8px;
+  }
+
+  .rep-max-table th,
+  .rep-max-table td {
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+
+  .rep-max-table th {
+    font-size: 10px;
+  }
+
+  .rep-max-table td:last-child {
+    font-size: 1.15rem;
+  }
+
+  .tab {
+    font-size: 10px;
+    padding: 8px 0;
+  }
+
+  .tab-icon {
+    width: 24px;
+    height: 24px;
+  }
+
+  .info-note {
+    font-size: 13px;
+  }
+}
+
+/* ============================================
+   Desktop — Wide (1440px+)
+   ============================================ */
+
+@media (min-width: 1440px) {
+  #app {
+    max-width: 780px;
+    margin: 60px auto;
   }
 }
 
