@@ -526,8 +526,9 @@ select option {
    ============================================ */
 
 .tab-bar {
-  height: var(--tab-height);
-  padding-bottom: var(--safe-bottom);
+  height: auto;
+  padding-top: 6px;
+  padding-bottom: calc(16px + var(--safe-bottom));
   display: flex;
   align-items: center;
   justify-content: space-around;
